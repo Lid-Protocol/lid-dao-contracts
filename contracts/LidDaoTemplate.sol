@@ -13,16 +13,14 @@ contract LidDaoTemplate is BaseTemplate {
   MiniMeToken public lidVotingRights;
 
   constructor(
-    MiniMeToken _lidVotingRights,
     DAOFactory _daoFactory,
     ENS _ens,
+    MiniMeTokenFactory _minimeTokenFactory,
     IFIFSResolvingRegistrar _aragonID
   )
-  BaseTemplate(_daoFactory, _ens, MiniMeTokenFactory(address(0)), _aragonID)
+  BaseTemplate(_daoFactory, _ens, _minimeTokenFactory, _aragonID)
   public
   {
-    require(_lidVotingRights != address(0), "Invalid LID Voting Rights");
-    lidVotingRights = _lidVotingRights;
     _ensureAragonIdIsValid(_aragonID);
   }
 
@@ -32,14 +30,19 @@ contract LidDaoTemplate is BaseTemplate {
   * @param _votingSettings Array of [supportRequired, minAcceptanceQuorum, voteDuration] to set up the voting app of the organization
   */
   function newInstance(
+    MiniMeToken _lidVotingRights,
     string memory _id,
     uint64[3] memory _votingSettings,
     address _permissionManager
   )
   public
   {
+    require(_lidVotingRights != address(0), "Invalid LID Voting Rights");
+    lidVotingRights = _lidVotingRights;
+
     _validateId(_id);
     _validateVotingSettings(_votingSettings);
+
 
     (Kernel dao, ACL acl) = _createDAO();
     _setupApps(dao, acl, _votingSettings, _permissionManager);

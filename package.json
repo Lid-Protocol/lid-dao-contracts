@@ -37,11 +37,16 @@
     "@aragon/apps-voting": "^2.1.0",
     "@aragon/id": "2.0.3",
     "@aragon/os": "4.3.0",
-    "@aragon/templates-shared": "^1.0.0"
+    "@aragon/templates-shared": "^1.0.0",
+    "@openzeppelin/contracts-ethereum-package": "^3.0.0",
+    "@openzeppelin/test-environment": "^0.1.4",
+    "@openzeppelin/test-helpers": "^0.5.6",
+    "@openzeppelin/upgrades": "^2.8.0"
   },
   "devDependencies": {
     "@aragon/apps-survey": "^1.0.0",
     "@aragon/test-helpers": "^2.0.0",
+    "chai": "^4.2.0",
     "eth-ens-namehash": "^2.0.8",
     "eth-gas-reporter": "^0.1.1",
     "ganache-cli": "^6.0.3",
