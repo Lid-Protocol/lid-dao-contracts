@@ -1,4 +1,4 @@
-pragma solidity 0.5.16;
+pragma solidity 0.4.24;
 
 import "./grantees/LidVotingRightsGrantee.sol";
 import "@aragon/templates-shared/contracts/BaseTemplate.sol";
@@ -42,7 +42,7 @@ contract LidDaoTemplate is BaseTemplate {
     _validateVotingSettings(_votingSettings);
 
     (Kernel dao, ACL acl) = _createDAO();
-    (Voting voting) = _setupApps(dao, acl, _votingSettings, _permissionManager);
+    _setupApps(dao, acl, _votingSettings, _permissionManager);
     _transferRootPermissionsFromTemplateAndFinalizeDAO(dao, _permissionManager);
     _registerID(_id, dao);
   }
@@ -54,7 +54,6 @@ contract LidDaoTemplate is BaseTemplate {
     address _permissionManager
   )
   internal
-  returns (Voting)
   {
     Agent agent = _installDefaultAgentApp(_dao);
     LidVotingRightsGrantee vrGrantee = _installLidVotingRightsGrantee(_dao, lidVotingRights);
@@ -67,13 +66,11 @@ contract LidDaoTemplate is BaseTemplate {
       address(vrGrantee),
       _permissionManager
     );
-
-    return (voting);
   }
 
   function _installLidVotingRightsGrantee(
     Kernel _dao,
-    LidVotingRights _lidVotingRights
+    MiniMeToken _lidVotingRights
   )
   internal
   returns (LidVotingRightsGrantee)

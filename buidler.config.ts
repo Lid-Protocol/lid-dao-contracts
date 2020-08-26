@@ -7,7 +7,7 @@ usePlugin("@nomiclabs/buidler-waffle");
 usePlugin("@nomiclabs/buidler-etherscan");
 usePlugin("buidler-typechain");
 
-const { 
+const {
   INFURA_API_KEY,
   PRIVATE_KEY,
   ETHERSCAN_API_KEY
