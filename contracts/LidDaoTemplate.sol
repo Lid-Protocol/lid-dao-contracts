@@ -59,16 +59,16 @@ contract LidDaoTemplate is BaseTemplate {
   internal
   {
     Agent agent = _installDefaultAgentApp(_dao);
-    LidVotingRightsGrantee vrGrantee = _installLidVotingRightsGrantee(_dao, lidVotingRights);
-    Voting voting = _installVotingApp(_dao, lidVotingRights, _votingSettings);
+    // LidVotingRightsGrantee vrGrantee = _installLidVotingRightsGrantee(_dao, lidVotingRights);
+    // Voting voting = _installVotingApp(_dao, lidVotingRights, _votingSettings);
 
-    _setupPermissions(
-      _acl,
-      agent,
-      voting,
-      address(vrGrantee),
-      _permissionManager
-    );
+    // _setupPermissions(
+    //   _acl,
+    //   agent,
+    //   voting,
+    //   address(vrGrantee),
+    //   _permissionManager
+    // );
   }
 
   function _installLidVotingRightsGrantee(

@@ -144,12 +144,12 @@ const loadLidEnvironment = async () => {
 
   await lidStaking.v2Initialize(lidToken.address, { from: owner });
 
-  const lidVotingRight = await LidVotingRight.new();
+  // const lidVotingRight = await LidVotingRight.new();
 
-  await lidVotingRight.initialize(lidStaking.address, lidToken.address);
+  // await lidVotingRight.initialize(lidStaking.address, lidToken.address);
 
 
-  return lidVotingRight;
+  return "0x61FfE691821291D02E9Ba5D33098ADcee71a3a17";
 };
 
 module.exports = {
