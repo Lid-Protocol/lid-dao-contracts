@@ -10,8 +10,6 @@ contract LidDaoTemplate is BaseTemplate {
 
   string constant private ERROR_BAD_VOTE_SETTINGS = "LID_DAO_BAD_VOTE_SETTINGS";
 
-  MiniMeToken public lidVotingRights;
-
   constructor(
     DAOFactory _daoFactory,
     ENS _ens,
@@ -30,22 +28,20 @@ contract LidDaoTemplate is BaseTemplate {
   * @param _votingSettings Array of [supportRequired, minAcceptanceQuorum, voteDuration] to set up the voting app of the organization
   */
   function newInstance(
-    MiniMeToken _lidVotingRights,
     string memory _id,
+    MiniMeToken _lidVotingRights,
     uint64[3] memory _votingSettings,
     address _permissionManager
   )
   public
   {
     require(_lidVotingRights != address(0), "Invalid LID Voting Rights");
-    lidVotingRights = _lidVotingRights;
 
     _validateId(_id);
     _validateVotingSettings(_votingSettings);
 
-
     (Kernel dao, ACL acl) = _createDAO();
-    _setupApps(dao, acl, _votingSettings, _permissionManager);
+    _setupApps(dao, acl, _lidVotingRights, _votingSettings, _permissionManager);
     _transferRootPermissionsFromTemplateAndFinalizeDAO(dao, _permissionManager);
     _registerID(_id, dao);
   }
@@ -53,14 +49,15 @@ contract LidDaoTemplate is BaseTemplate {
   function _setupApps(
     Kernel _dao,
     ACL _acl,
+    MiniMeToken _lidVotingRights,
     uint64[3] memory _votingSettings,
     address _permissionManager
   )
   internal
   {
     Agent agent = _installDefaultAgentApp(_dao);
-    LidVotingRightsGrantee vrGrantee = _installLidVotingRightsGrantee(_dao, lidVotingRights);
-    Voting voting = _installVotingApp(_dao, lidVotingRights, _votingSettings);
+    LidVotingRightsGrantee vrGrantee = _installLidVotingRightsGrantee(_dao, _lidVotingRights);
+    Voting voting = _installVotingApp(_dao, _lidVotingRights, _votingSettings);
 
     _setupPermissions(
       _acl,
@@ -82,9 +79,17 @@ contract LidDaoTemplate is BaseTemplate {
       LidVotingRightsGrantee(0).initialize.selector,
       _lidVotingRights
     );
-    return LidVotingRightsGrantee(
-      _installNonDefaultApp(_dao, LID_VR_GRANTEE_APP_ID, initializeData)
-    );
+
+    LidVotingRightsGrantee logic = new LidVotingRightsGrantee();
+
+    address instance = address(_dao.newAppInstance(
+      LID_VR_GRANTEE_APP_ID,
+      logic,
+      initializeData,
+      false
+    ));
+    emit InstalledApp(instance, LID_VR_GRANTEE_APP_ID);
+    return LidVotingRightsGrantee(instance);
   }
 
   function _setupPermissions(
