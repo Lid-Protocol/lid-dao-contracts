@@ -2,6 +2,7 @@ const { getENS, getTemplateAddress } = require('@aragon/templates-shared/lib/ens
 const { getEventArgument } = require('@aragon/test-helpers/events')
 
 const { setupLidEnv } = require('./helpers/setupLidEnv')
+const { getInstalledAppsById } = require('./helpers/events')(artifacts)
 const time = require('./helpers/time')(web3)
 
 const LidDaoTemplate = artifacts.require('LidDaoTemplate')
@@ -31,5 +32,8 @@ contract('LidDaoTemplate', (accounts) => {
       getEventArgument(receipt, 'SetupDao', 'dao'),
       'should have emitted a SetupDao event'
     )
+
+    const apps = getInstalledAppsById(receipt);
+    assert.equal(apps.agent.length, 1, 'show have installed agent app')
   });
 });
