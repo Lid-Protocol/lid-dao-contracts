@@ -1,17 +1,28 @@
-const { hash: namehash } = require('eth-ens-namehash')
+const { hash: namehash } = require("eth-ens-namehash");
 
-const APPS = [
-  { name: 'agent', contractName: 'Agent' },
-  { name: 'voting', contractName: 'Voting' },
-  { name: 'lidvotingrightsgrantee', contractName: 'LidVotingRightsGrantee' },
-]
+const BASE_APPS = [
+  { name: "agent", contractName: "Agent" },
+  { name: "voting", contractName: "Voting" }
+];
 
-const APP_IDS = APPS.reduce((ids, { name }) => {
-  ids[name] = namehash(`${name}.aragonpm.eth`)
-  return ids
-}, {})
+const LID_APPS = [
+  {
+    name: "lidvotingrightsgrantee",
+    contractName: "LidVotingRightsGrantee"
+  }
+];
+
+const BASE_APP_IDS = BASE_APPS.reduce((ids, { name }) => {
+  ids[name] = namehash(`${name}.aragonpm.eth`);
+  return ids;
+}, {});
+
+const LID_APP_IDS = LID_APPS.reduce((ids, { name }) => {
+  ids[name] = namehash(`${name}.open.aragonpm.eth`);
+  return ids;
+}, {});
 
 module.exports = {
-  APPS,
-  APP_IDS
-}
+  APPS: [...BASE_APPS, ...LID_APPS],
+  APP_IDS: { ...BASE_APP_IDS, ...LID_APP_IDS }
+};
