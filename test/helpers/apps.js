@@ -5,11 +5,8 @@ const BASE_APPS = [
   { name: "voting", contractName: "Voting" }
 ];
 
-const LID_APPS = [
-  {
-    name: "lidvotingrightsgrantee",
-    contractName: "LidVotingRightsGrantee"
-  }
+const DANDELION_APPS = [
+  { name: 'token-balance-oracle', contractName: 'TokenBalanceOracle' },
 ];
 
 const BASE_APP_IDS = BASE_APPS.reduce((ids, { name }) => {
@@ -17,12 +14,12 @@ const BASE_APP_IDS = BASE_APPS.reduce((ids, { name }) => {
   return ids;
 }, {});
 
-const LID_APP_IDS = LID_APPS.reduce((ids, { name }) => {
-  ids[name] = namehash(`${name}.open.aragonpm.eth`);
-  return ids;
+const DANDELION_APP_IDS = DANDELION_APPS.reduce((ids, { name }) => {
+  ids[name] = namehash(`${name}.open.aragonpm.eth`)
+  return ids
 }, {});
 
 module.exports = {
-  APPS: [...BASE_APPS, ...LID_APPS],
-  APP_IDS: { ...BASE_APP_IDS, ...LID_APP_IDS }
+  APPS: [...BASE_APPS, ...DANDELION_APPS ],
+  APP_IDS: { ...BASE_APP_IDS, ...DANDELION_APP_IDS }
 };

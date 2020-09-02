@@ -9,6 +9,10 @@ contract LidDaoTemplate is BaseTemplate {
 
   bytes32 constant private TOKEN_BALANCE_ORACLE_APP_ID = apmNamehash("token-balance-oracle");
 
+  address constant ANY_ENTITY = address(-1);
+  uint8 constant ORACLE_PARAM_ID = 203;
+  enum Op { NONE, EQ, NEQ, GT, LT, GTE, LTE, RET, NOT, AND, OR, XOR, IF_ELSE }
+
   event LidDaoDeployed(
     address dao,
     address acl,
@@ -41,7 +45,7 @@ contract LidDaoTemplate is BaseTemplate {
   function newInstance(
     string memory _id,
     MiniMeToken _lidVotingRights,
-    uint256 _minVotingRights,
+    uint64 _minVotingRights,
     uint64[3] memory _votingSettings,
     address _permissionManager
   )
@@ -73,7 +77,7 @@ contract LidDaoTemplate is BaseTemplate {
     Kernel _dao,
     ACL _acl,
     MiniMeToken _lidVotingRights,
-    uint256 _minVotingRights,
+    uint64 _minVotingRights,
     uint64[3] memory _votingSettings,
     address _permissionManager
   )
@@ -98,7 +102,7 @@ contract LidDaoTemplate is BaseTemplate {
   function _installTokenBalanceOracle(
     Kernel _dao,
     MiniMeToken _lidVotingRights,
-    uint256 _minVotingRights
+    uint64 _minVotingRights
   ) internal returns (TokenBalanceOracle) {
     TokenBalanceOracle oracle = TokenBalanceOracle(_registerApp(_dao, TOKEN_BALANCE_ORACLE_APP_ID));
     oracle.initialize(_lidVotingRights, _minVotingRights * (10 ** _lidVotingRights.decimals()));
@@ -130,6 +134,13 @@ contract LidDaoTemplate is BaseTemplate {
 
   function _validateVotingSettings(uint64[3] memory _votingSettings) private pure {
     require(_votingSettings.length == 3, ERROR_BAD_VOTE_SETTINGS);
+  }
+
+  function _registerApp(Kernel _dao, bytes32 _appId) private returns (address) {
+    address proxy = _dao.newAppInstance(_appId, _latestVersionAppBase(_appId));
+    emit InstalledApp(proxy, _appId);
+
+    return proxy;
   }
 
   // ORACLE FNS
