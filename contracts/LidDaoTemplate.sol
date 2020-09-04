@@ -7,7 +7,9 @@ contract LidDaoTemplate is BaseTemplate {
 
   string constant private ERROR_BAD_VOTE_SETTINGS = "LID_DAO_BAD_VOTE_SETTINGS";
 
-  bytes32 constant private TOKEN_BALANCE_ORACLE_APP_ID = apmNamehash("token-balance-oracle");
+  bytes32 constant private TOKEN_BALANCE_ORACLE_APP_ID = keccak256(
+    abi.encodePacked(apmNamehash("open"), keccak256("token-balance-oracle"))
+  );
 
   address constant ANY_ENTITY = address(-1);
   uint8 constant ORACLE_PARAM_ID = 203;
@@ -120,7 +122,8 @@ contract LidDaoTemplate is BaseTemplate {
   {
     _createAgentPermissions(_acl, _agent, _voting, _permissionManager);
     _createVaultPermissions(_acl, Vault(_agent), _voting, _permissionManager);
-    _createEvmScriptsRegistryPermissions(_acl, _voting, _permissionManager);
+    _createEvmScriptsRegistryPermissions(_acl, _permissionManager, _permissionManager);
+    _createTokenBalanceOraclePermissions(_acl, _tokenBalanceOracle, _voting, _permissionManager);
 
     // Modified _createVotingPermissions, using the token balance oracle as a grantee
     _acl.createPermission(_voting, _voting, _voting.MODIFY_QUORUM_ROLE(), _permissionManager);
@@ -130,6 +133,18 @@ contract LidDaoTemplate is BaseTemplate {
     _acl.createPermission(ANY_ENTITY, _voting, _voting.CREATE_VOTES_ROLE(), address(this));
     _setOracle(_acl, ANY_ENTITY, _voting, _voting.CREATE_VOTES_ROLE(), _tokenBalanceOracle);
     _acl.setPermissionManager(_permissionManager, _voting, _voting.CREATE_VOTES_ROLE());
+  }
+
+  function _createTokenBalanceOraclePermissions(
+    ACL _acl,
+    TokenBalanceOracle _oracle,
+    address _grantee,
+    address _manager
+  )
+    internal
+  {
+    _acl.createPermission(_grantee, _oracle, _oracle.SET_TOKEN_ROLE(), _manager);
+    _acl.createPermission(_grantee, _oracle, _oracle.SET_MIN_BALANCE_ROLE(), _manager);
   }
 
   function _validateVotingSettings(uint64[3] memory _votingSettings) private pure {
