@@ -47,7 +47,7 @@ contract LidDaoTemplate is BaseTemplate {
   function newInstance(
     string memory _id,
     MiniMeToken _lidVotingRights,
-    uint64 _minVotingRights,
+    uint256 _minVotingRights,
     uint64[3] memory _votingSettings,
     address _permissionManager
   )
@@ -79,7 +79,7 @@ contract LidDaoTemplate is BaseTemplate {
     Kernel _dao,
     ACL _acl,
     MiniMeToken _lidVotingRights,
-    uint64 _minVotingRights,
+    uint256 _minVotingRights,
     uint64[3] memory _votingSettings,
     address _permissionManager
   )
@@ -104,10 +104,10 @@ contract LidDaoTemplate is BaseTemplate {
   function _installTokenBalanceOracle(
     Kernel _dao,
     MiniMeToken _lidVotingRights,
-    uint64 _minVotingRights
+    uint256 _minVotingRights
   ) internal returns (TokenBalanceOracle) {
     TokenBalanceOracle oracle = TokenBalanceOracle(_registerApp(_dao, TOKEN_BALANCE_ORACLE_APP_ID));
-    oracle.initialize(_lidVotingRights, _minVotingRights * (10 ** _lidVotingRights.decimals()));
+    oracle.initialize(_lidVotingRights, _minVotingRights);
     return oracle;
   }
 

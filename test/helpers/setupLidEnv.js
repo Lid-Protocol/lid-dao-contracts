@@ -136,7 +136,6 @@ const setupLidEnv = async (web3, accounts) => {
 
   const lidVotingRight = await LidVotingRight.deploy().send(opts(owner));
   await lidVotingRight.methods.initialize(lidStaking.options.address, lidToken.options.address).send(opts(owner));
-
   return lidVotingRight;
 }
 

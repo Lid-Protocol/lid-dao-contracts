@@ -32,8 +32,8 @@ contract('LidDaoTemplate', (accounts) => {
     const receipt = await template.newInstance(
       "lid",
       lidVotingRight.options.address,
-      2000,
-      [50e16, 5e16, time.duration.days(2).toNumber()],
+      2000e18, /*2000 LID*/
+      [50e16 /*50%*/, 5e16 /*5%*/, time.duration.days(2).toNumber()],
       admin
     )
     const dao = Kernel.at(getEventArgument(receipt, 'DeployDao', 'dao'))
@@ -71,7 +71,7 @@ contract('LidDaoTemplate', (accounts) => {
     // TokenBalanceOracle app correctly set up
     assert.isTrue(await oracle.hasInitialized(), 'token-balance-oracle not initialized')
     assert.equal(await oracle.token(), lidVotingRight.options.address.toLowerCase())
-    // TODO - assert.equal((await oracle.minBalance()).toNumber(), 2000e16)
+    assert.equal((await oracle.minBalance()).toNumber(), 2000e18)
 
     // Only the admin can manage apps
     await assertRoleNotGranted(acl, dao, 'APP_MANAGER_ROLE', template)
