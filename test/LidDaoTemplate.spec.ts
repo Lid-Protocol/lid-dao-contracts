@@ -1,1 +1,0 @@
-const { getENS } = require('@aragon/templates-shared/lib/ens')

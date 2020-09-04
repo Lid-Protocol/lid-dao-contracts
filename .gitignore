@@ -1,6 +1,17 @@
+# Dependencies
 node_modules
-.env
-cache
-artifacts
-types
-coverage*
+
+# lerna
+lerna-debug.log
+
+# lock files
+yarn.lock
+
+# truffle build artifacts
+abi
+build
+*/abis.json
+flattened_contracts
+
+# 1hive apps
+1hive-token-oracle
