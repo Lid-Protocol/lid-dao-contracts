@@ -7,6 +7,8 @@ contract LidDaoTemplate is BaseTemplate {
 
   string constant private ERROR_BAD_VOTE_SETTINGS = "LID_DAO_BAD_VOTE_SETTINGS";
 
+  // NOTE: use this when deploying to rinkeby or mainnet
+  //bytes32 constant private TOKEN_BALANCE_ORACLE_APP_ID = apmNamehash("token-balance-oracle");
   bytes32 constant private TOKEN_BALANCE_ORACLE_APP_ID = keccak256(
     abi.encodePacked(apmNamehash("open"), keccak256("token-balance-oracle"))
   );
@@ -130,9 +132,10 @@ contract LidDaoTemplate is BaseTemplate {
     _acl.createPermission(_voting, _voting, _voting.MODIFY_SUPPORT_ROLE(), _permissionManager);
 
     // For CREATE_VOTES_ROLE, allow anyone to enact if the oracle says they can
-    _acl.createPermission(ANY_ENTITY, _voting, _voting.CREATE_VOTES_ROLE(), address(this));
+    /*_acl.createPermission(ANY_ENTITY, _voting, _voting.CREATE_VOTES_ROLE(), address(this));
     _setOracle(_acl, ANY_ENTITY, _voting, _voting.CREATE_VOTES_ROLE(), _tokenBalanceOracle);
-    _acl.setPermissionManager(_permissionManager, _voting, _voting.CREATE_VOTES_ROLE());
+    _acl.setPermissionManager(_permissionManager, _voting, _voting.CREATE_VOTES_ROLE());*/
+    _acl.createPermission(ANY_ENTITY, _voting, _voting.CREATE_VOTES_ROLE(), _permissionManager);
   }
 
   function _createTokenBalanceOraclePermissions(

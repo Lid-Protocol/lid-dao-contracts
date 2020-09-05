@@ -3,11 +3,11 @@ const { assert } = require('chai')
 const { getEventArgument } = require('@aragon/test-helpers/events')
 const { assertRole, assertMissingRole, assertRoleNotGranted } = require('@aragon/templates-shared/helpers/assertRole')(web3)
 
-const { getENS, getTemplateAddress } = require('./lib/ens')(web3, artifacts)
-const { getInstalledAppsById } = require('./helpers/events')(artifacts)
-const { setupLidEnv } = require('./helpers/setupLidEnv')
-const { APP_IDS } = require('./helpers/apps')
-const time = require('./helpers/time')(web3)
+const { getENS, getTemplateAddress } = require('../scripts/lib/ens')(web3, artifacts)
+const { getInstalledAppsById } = require('../scripts/helpers/events')(artifacts)
+const { newLidEnv } = require('../scripts/new-lid-env')
+const { APP_IDS } = require('../scripts/helpers/apps')
+const time = require('../scripts/helpers/time')(web3)
 
 const Kernel = artifacts.require('Kernel')
 const ACL = artifacts.require('ACL')
@@ -23,7 +23,7 @@ contract('LidDaoTemplate', (accounts) => {
   before('fetch LidDaoTemplate and ENS', async () => {
     ens = await getENS()
     template = LidDaoTemplate.at(await getTemplateAddress())
-    lidVotingRight = await setupLidEnv(web3, accounts)
+    lidVotingRight = await newLidEnv(web3, accounts)
     admin = accounts[0]
   });
 

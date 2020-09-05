@@ -9,7 +9,7 @@ const LidCertifiedPresaleABI = require("lid-contracts/build/contracts/LidCertifi
 const LidDaoFundABI = require("lid-contracts/build/contracts/LidDaoLock.json");
 const LidVotingRightABI = require("lid-contracts/build/contracts/LidVotingRights.json");
 
-const setupLidEnv = async (web3, accounts) => {
+const newLidEnv = async (web3, accounts, liveNetwork = false) => {
 
   const Contract = require('web3-eth-contract');
   Contract.setProvider(web3.currentProvider);
@@ -51,9 +51,9 @@ const setupLidEnv = async (web3, accounts) => {
   };
 
   const owner = accounts[0];
-  const stakers = [accounts[1], accounts[2], accounts[3], accounts[4]];
-  const nonstaker = accounts[5];
-  const distributionAccount = accounts[8];
+  const stakers = [accounts[1], accounts[2], accounts[3]];
+  const nonstaker = accounts[4];
+  const distributionAccount = accounts[5];
 
   // Create the token instance
   let lidToken = await LidToken.deploy().send(opts(owner));
@@ -100,7 +100,6 @@ const setupLidEnv = async (web3, accounts) => {
     await lidToken.methods.mint(stakers[0], initEth).send(opts(owner)),
     await lidToken.methods.mint(stakers[1], initEth).send(opts(owner)),
     await lidToken.methods.mint(stakers[2], initEth).send(opts(owner)),
-    await lidToken.methods.mint(stakers[3], initEth).send(opts(owner)),
     await lidToken.methods.mint(nonstaker, initEth).send(opts(owner)),
     await lidToken.methods.mint(distributionAccount, initEth).send(opts(owner))
   ]);
@@ -108,18 +107,25 @@ const setupLidEnv = async (web3, accounts) => {
   await lidToken.methods.setIsTransfersActive(true).send(opts(owner));
   await lidToken.methods.setIsTaxActive(true).send(opts(owner));
 
-  const time = require('./time')(web3)
-  await time.advanceBlock();
-  let latest = await time.latest();
+  if (!liveNetwork) {
+    const time = require('./helpers/time')(web3)
+    await time.advanceBlock();
+    let latest = await time.latest();
 
-  await lidStaking.methods.setStartTime(
-    latest.add(time.duration.days(1)).toString()
-  ).send(opts(owner));
+    // Set staking to start in 1 day
+    await lidStaking.methods.setStartTime(
+      latest.add(time.duration.days(1)).toString()
+    ).send(opts(owner));
 
-  // Start the staking period
-  await time.advanceBlock();
-  latest = await time.latest();
-  await time.increase(time.duration.days(30));
+    // Start the staking period
+    await time.advanceBlock();
+    latest = await time.latest();
+    await time.increase(time.duration.days(30));
+  } else {
+    await lidStaking.methods.setStartTime(
+      stakingParams.startTime
+    ).send(opts(owner))
+  }
 
   // Have all the stakers send an initial stake + registration
   for (const staker of stakers) {
@@ -140,5 +146,5 @@ const setupLidEnv = async (web3, accounts) => {
 }
 
 module.exports = {
-  setupLidEnv
+  newLidEnv
 };
