@@ -3,34 +3,80 @@
 
 The LID DAO gives LID stakers the ability to vote and manage the LID ecosystem.
 
+## 🚨 Not Audited
+
 ## Permissions
-| App | Permission | Grantee | Manager | ACL Oracle |  
-|-----|------------|---------|---------|------------|  
-| Kernel | TODO | TODO | TODO | None |  
-| ACL | TODO | TODO | TODO | None |
-| EVMScriptRegistry | TODO | TODO | TODO | None |
-| Voting | TODO | TODO | TODO | None |  
-| Agent | TODO | TODO | TODO | None |  
-| Token Oracle | TODO | TODO | TODO | None |  
+| App | Permission | Description | Grantee | Manager |  
+|-----|------------|-------------|---------|---------|  
+| Kernel | APP_MANAGER_ROLE | Manage apps | $ADMIN | $ADMIN |  
+| ACL | CREATE_PERMISSIONS_ROLE | Create permissions | $ADMIN | $ADMIN |  
+| EVMScriptRegistry | REGISTRY_ADD_EXECUTOR_ROLE | Add executors | $ADMIN | $ADMIN |  
+| EVMScriptRegistry | REGISTRY_MANAGER_ROLE | Enable and disable executors | $ADMIN | $ADMIN |  
+| Voting | CREATE_VOTES_ROLE | Create new votes | ANY_ENTITY | $ADMIN |  
+| Voting | MODIFY_SUPPORT_ROLE | Modify support | Voting | $ADMIN |  
+| Voting | MODIFY_QUORUM_ROLE | Modify quorum | Voting | $ADMIN |  
+| Agent | TRANSFER_ROLE | Transfer Agent's tokens | Voting | $ADMIN |  
+| Agent | EXECUTE_ROLE | Execute actions | Voting | $ADMIN |  
+| Agent | RUN_SCRIPT_ROLE | Run EVM Script | Voting | $ADMIN | 
 
-## 🚨 Not Audited Yet
+## Getting Started
+1. Use the right npm version:  
+`nvm install && nvm use`  
 
-TODO: documentation
-Misc
-- How to test locally
-- How to test on Rinkeby
-- How to deploy to mainnet
-- How to register accounts for different networks
-- How to configure the DAO for different networks
+2. Install dependencies:  
+`npm i`  
 
-Lid-Test-Env
-- document what accounts are what (owner, stakers[0, 1, 2], non staker, etc)
-- how to deploy new lid test environment
-- how to use an existing one
+3. Build everything:  
+`npm run compile`  
 
-Lid-Dao-Template
-- How to deploy a new template
-- How to create a new DAO instance
-- Commented code in the template
+## Local Development
+1. Run tests:  
+`nvm run test`  
 
-npx truffle exec ./scripts/new-lid-dao.js --network rinkeby
+## Rinkeby Testing
+1. Build contracts:  
+`npm run compile`  
+
+2. Configure testnet accounts within `~/.aragon/rinkeby_key.json`:  
+```
+{
+  "rpc": "https://rinkeby.infura.io/v3/${API_KEY}",
+  "keys": [
+    "d79...", // ADMIN
+    "c7a...", // STAKER_1
+    "653...", // STAKER_2
+    "9ac...", // STAKER_3
+    "7a0...", // NON_STAKER
+    "4f6..."  // NON_STAKER
+  ]
+}
+```
+
+3. Configure DAO within `./configs/rinkeby-dao-config.json`:  
+```
+{
+  "name": "...", // Optional, if not present random name will be used
+  "supportRequiredPct": 50,
+  "minAcceptQuorumPct": 5,
+  "voteTimeDays": 7,
+  "lidVotingRights": "..." // Optional, if not present new LID env will be deployed
+}
+```
+
+4. Deploy LidDaoTemplate.sol to Aragon's PM (if changes were made):  
+`npm run deploy:rinkeby`  
+
+5. Create new DAO instance:  
+`npm run create:rinkeby`  
+
+## Mainnet Deployment
+
+Same as Rinkeby steps above, with the following name changes...
+2. `~/.aragon/mainnet_key.json`  
+3. `./configs/mainnet-dao-config.json`  
+4. `npm run deploy:mainnet`  
+5. `npm run create:mainnet`  
+
+## Aragon Architecture Walk-through
+* [Presentation Video](https://youtu.be/A7DHfRJUuIk)  
+* [References Document](https://docs.google.com/document/d/1_YB-8TXDRg98Fzn8NZrtcUf7DGfSVDdzqiqkwLtBxF4/edit?usp=sharing)  

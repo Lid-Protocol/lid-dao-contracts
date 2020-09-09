@@ -12,19 +12,19 @@
     "test/"
   ],
   "scripts": {
-    "preinstall": "([ ! -d 1hive-token-oracle ] && git clone https://github.com/1Hive/token-oracle 1hive-token-oracle && cd 1hive-token-oracle && npm i) || true",
     "prepublishOnly": "npm run compile && npm run abi:extract -- --no-compile",
     "abi:extract": "truffle-extract --output abi/ --keys abi",
     "compile": "truffle compile --all",
     "lint": "solium --dir ./contracts",
-    "test": "concurrently \"npm run start:devchain\" \"wait-on tcp:8545 && npm run deploy:1hive && npm run test:ganache\" --kill-others --success first",
+    "test": "concurrently \"npm run start:devchain\" \"wait-on tcp:8545 && npm run test:ganache\" --kill-others --success first",
     "start:devchain": "aragon devchain -r",
-    "deploy:1hive": "cd 1hive-token-oracle && npm run publish:major -- --skip-confirmation",
     "test:ganache": "./node_modules/@aragon/templates-shared/scripts/test-ganache.sh",
     "test:geth": "npm run docker:run && npm run docker:wait-gas && npm run deploy:devnet && truffle test --network devnet && npm run docker:stop",
     "docker:run": "cd ./node_modules/@aragon/templates-shared/; docker-compose -f docker-compose.yml up -d; RESULT=$?; cd -; $(exit $RESULT)",
     "docker:stop": "cd ./node_modules/@aragon/templates-shared/; docker-compose down; cd -",
     "docker:wait-gas": "truffle exec ./node_modules/@aragon/templates-shared/scripts/sleep-until-gaslimit.js --network devnet 6900000",
+    "create:rinkeby": "npx truffle exec ./scripts/new-lid-dao.js --network rinkeby",
+    "create:mainnet": "npx truffle exec ./scripts/new-lid-dao.js --network mainnet",
     "deploy:rpc": "npm run compile && truffle exec ./scripts/deploy.js --network rpc --ens 0x5f6f7e8cc7346a11ca2def8f827b7a0b612c56a1",
     "deploy:devnet": "npm run compile && truffle exec ./scripts/deploy.js --network devnet",
     "deploy:staging": "npm run compile && truffle exec ./scripts/deploy.js --network rinkeby --ens 0xfe03625ea880a8cba336f9b5ad6e15b0a3b5a939 --dao-factory 0xf959e8953e2fe03782a7b86a7a5d948cb511ef5d --mini-me-factory 0xac443f983c38c02149ce2ffcff8b7de90dccf77c",
@@ -40,7 +40,6 @@
     "publish:mainnet": "aragon apm publish major $(npm run deploy:mainnet | tail -n 1) --environment mainnet"
   },
   "dependencies": {
-    "@1hive/oracle-token-balance": "^1.0.0",
     "@aragon/apps-agent": "^2.0.0",
     "@aragon/apps-shared-minime": "^1.0.0",
     "@aragon/apps-vault": "^4.1.0",
@@ -49,9 +48,6 @@
     "@aragon/id": "2.0.3",
     "@aragon/os": "4.3.0",
     "@aragon/templates-shared": "^1.0.1",
-    "@openzeppelin/contracts-ethereum-package": "^3.0.0",
-    "@openzeppelin/test-environment": "^0.1.4",
-    "@openzeppelin/test-helpers": "^0.5.6",
     "@openzeppelin/upgrades": "^2.8.0",
     "lid-contracts": "0.0.1-alpha.2"
   },
@@ -60,12 +56,9 @@
     "chai": "^4.2.0",
     "concurrently": "5.3.0",
     "eth-ens-namehash": "^2.0.8",
-    "eth-gas-reporter": "^0.1.1",
     "ganache-cli": "^6.0.3",
     "solium": "^1.0.4",
     "truffle": "4.1.14",
-    "truffle-extract": "^1.2.1",
-    "truffle-hdwallet-provider": "0.0.3",
     "wait-on": "5.2.0"
   }
 }

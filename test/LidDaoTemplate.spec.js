@@ -14,7 +14,6 @@ const ACL = artifacts.require('ACL')
 const EVMScriptRegistry = artifacts.require('EVMScriptRegistry')
 const Agent = artifacts.require('Agent')
 const Voting = artifacts.require('Voting')
-const TokenBalanceOracle = artifacts.require('TokenBalanceOracle')
 const LidDaoTemplate = artifacts.require('LidDaoTemplate')
 
 contract('LidDaoTemplate', (accounts) => {
@@ -32,7 +31,6 @@ contract('LidDaoTemplate', (accounts) => {
     const receipt = await template.newInstance(
       "lid",
       lidVotingRight.options.address,
-      2000e18, /*2000 LID*/
       [50e16 /*50%*/, 5e16 /*5%*/, time.duration.days(2).toNumber()],
       admin
     )
@@ -51,8 +49,6 @@ contract('LidDaoTemplate', (accounts) => {
     const agent = Agent.at(apps.agent[0])
     assert.equal(apps.voting.length, 1, 'show have installed voting app')
     const voting = Voting.at(apps.voting[0])
-    assert.equal(apps['token-balance-oracle'].length, 1, 'show have installed token-balance-oracle app')
-    const oracle = TokenBalanceOracle.at(apps['token-balance-oracle'][0])
 
     // Voting app correctly set up
     assert.isTrue(await voting.hasInitialized(), 'voting not initialized')
@@ -68,11 +64,6 @@ contract('LidDaoTemplate', (accounts) => {
     await assertMissingRole(acl, agent, 'DESIGNATE_SIGNER_ROLE')
     await assertMissingRole(acl, agent, 'ADD_PRESIGNED_HASH_ROLE')
 
-    // TokenBalanceOracle app correctly set up
-    assert.isTrue(await oracle.hasInitialized(), 'token-balance-oracle not initialized')
-    assert.equal(await oracle.token(), lidVotingRight.options.address.toLowerCase())
-    assert.equal((await oracle.minBalance()).toNumber(), 2000e18)
-
     // Only the admin can manage apps
     await assertRoleNotGranted(acl, dao, 'APP_MANAGER_ROLE', template)
     await assertRole(acl, dao, { address: admin }, 'APP_MANAGER_ROLE')
@@ -86,10 +77,6 @@ contract('LidDaoTemplate', (accounts) => {
     const reg = await EVMScriptRegistry.at(await acl.getEVMScriptRegistry()) 
     await assertRole(acl, reg, { address: admin }, 'REGISTRY_ADD_EXECUTOR_ROLE')
     await assertRole(acl, reg, { address: admin }, 'REGISTRY_MANAGER_ROLE')
-
-    // Voting can set token and min balance
-    await assertRole(acl, oracle, { address: admin }, 'SET_TOKEN_ROLE', voting)
-    await assertRole(acl, oracle, { address: admin }, 'SET_MIN_BALANCE_ROLE', voting)
 
     // Voting can execute all actions on agent
     await assertRole(acl, agent, { address: admin }, 'EXECUTE_ROLE', voting)
