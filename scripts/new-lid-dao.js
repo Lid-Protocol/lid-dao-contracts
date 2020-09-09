@@ -58,12 +58,11 @@ module.exports = async (callback) => {
 
     const lidDaoTemplate = await LidDaoTemplate.at(lidDaoTemplateAddress())
 
-    const lidDaoName = "lid-dao-" + Math.floor(10000 * Math.random())
+    const lidDaoName = config.name ? config.name : "lid-dao-" + Math.floor(10000 * Math.random())
 
     const receipt = await lidDaoTemplate.newInstance(
       lidDaoName,
       lidVotingRightsAddr,
-      config.minStake,
       [
         config.supportRequiredPct * 1e16,
         config.minAcceptQuorumPct * 1e16,
@@ -76,6 +75,7 @@ module.exports = async (callback) => {
     console.log("successfully deployed the LID DAO:")
     console.log(`address: ${dao}`)
     console.log(`name: ${lidDaoName}`)
+    console.log(`url: https://${network()}.client.aragon.org/#/${lidDaoName}/`)
     callback()
   } catch (error) {
     console.log(error)

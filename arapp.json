@@ -16,7 +16,7 @@
       "network": "rinkeby",
       "registry": "0x98Df287B6C145399Aaa709692c8D308357bC085D",
       "wsRPC": "wss://rinkeby.eth.aragon.network/ws",
-      "address": "0x21b9e9cc119381dac12a2aceb74fd964e69ce40f"
+      "address": "0xdcaad719fb74fb594baccc4f1373174ac118c7de"
     },
     "ropsten": {
       "appName": "lid-dao-template.open.aragonpm.eth",

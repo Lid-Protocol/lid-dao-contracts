@@ -1,5 +1,4 @@
 {
-  "minStake": 2e16,
   "supportRequiredPct": 50,
   "minAcceptQuorumPct": 5,
   "voteTimeDays": 7,
