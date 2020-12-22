@@ -12,3 +12,10 @@ abi
 build
 */abis.json
 flattened_contracts
+
+# aragon
+./.aragon
+mainnet_key.json
+
+# truffle key
+privatekey.js
